@@ -14,6 +14,7 @@
 # Versão 1.0 - 21/08/2014 - Versão inicial
 # Versão 1.1 - 22/08/2014 - Adicionado a consulta do nome do SO no arquivo /etc/redhat-release
 #                         - Removido informacao de data de instalação, inconsistente;
+# Versão 1.2 - 01/09/2014 - Adicionado a consulta do nome do SO nos arquivos /etc/system-release e /etc/oracle-release
 #
 #
 #                      GNU GENERAL PUBLIC LICENSE
@@ -38,7 +39,7 @@ $WARNING=1;
 $CRITICAL=2;
 $UNKNOWN=3;
 $plugin_name="check_lx";
-$versao="v1.1";
+$versao="v1.2";
 #
 # Armazena o nome do script/plugin
 $plugin=__FILE__;
@@ -71,7 +72,9 @@ sub OS_Info {
   $HostName=`/bin/hostname`;
   $HostName=~s/\r?\n//g;
   $ReleaseFile='/etc/os-release';
+  $SystemFile='/etc/system-release';
   $RedHatFile='/etc/redhat-release';
+  $OracleFile='/etc/oracle-release';
   $SuSEFile='/etc/SuSE-release';
   $IssueFile='/etc/issue';
   if (-e $ReleaseFile) {
@@ -83,6 +86,16 @@ sub OS_Info {
   }
   elsif (-e $SuSEFile) {
     $OSversion=`/usr/bin/head -n 1 $SuSEFile`;
+    $OSversion=~s/\r?\n//g;
+    return "$HostName - $OSversion\n";
+  }
+  elsif (-e $SystemFile) {
+    $OSversion=`/usr/bin/head -n 1 $SystemFile`;
+    $OSversion=~s/\r?\n//g;
+    return "$HostName - $OSversion\n";
+  }
+  elsif (-e $OracleFile) {
+    $OSversion=`/usr/bin/head -n 1 $OracleFile`;
     $OSversion=~s/\r?\n//g;
     return "$HostName - $OSversion\n";
   }
