@@ -152,7 +152,7 @@ sub Uptime {
     $Segundos = $Segundos % 3600;
     $Minutos = int($Segundos / 60);
     if ($Horas == 0) {
-      print "WARNING - Host reiniciado! Uptime: $Dias dia(s), $Hora(s) hora(s) e $Minutos minuto(s). $versao\n";
+      print "WARNING - Host reiniciado! Uptime: $Dias dia(s), $Horas hora(s) e $Minutos minuto(s). $versao\n";
       $Status=$WARNING;
     }
     else {
