@@ -9,7 +9,7 @@
 # Prerequisites:
 #	net-snmp-python
 #
-# Release 1.1 - 2015/03/24
+# Release 1.2 - 2015/03/27
 #	Author: Eduardo Hernacki - OpenUX <eduardo.hernacki@openux.com.br>
 #
 #
@@ -32,7 +32,7 @@
 ########################################################################################
 
 plugin_name='check_ups_info.py'
-plugin_version='v1.1'
+plugin_version='v1.2'
 
 # Python modules
 import sys
@@ -88,7 +88,6 @@ def snmpOut(GetOID):
 		sys.exit(CRITICAL)
 	return snmpOut
 
-
 # Nobreak information check
 if options.checkType == 'info':
 	manufacturer = '%s' % snmpOut(upsIdentManufacturer)
@@ -109,13 +108,13 @@ elif  options.checkType == 'load':
 
 	# Threshold validation
 	if str(outputLoad) >= str(options.critTreshold):
-		print 'UPS CRITICAL: The output load is %s%% | TimeLeft=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
+		print 'UPS CRITICAL: The output load is %s%% | OutputLoad=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
 		sys.exit(CRITICAL)
 	elif str(outputLoad) >= str(options.warnTreshold):
-		print 'UPS WARNING: The output load is %s%% | TimeLeft=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
+		print 'UPS WARNING: The output load is %s%% | OutputLoad=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
 		sys.exit(WARNING)
 	else:
-		print 'UPS OK: The output load is %s%% | TimeLeft=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
+		print 'UPS OK: The output load is %s%% | OutputLoad=%s;%s;%s' % (outputLoad, outputLoad, options.warnTreshold, options.critTreshold)
 		sys.exit(OK)
 
 # Battery timeleft check
