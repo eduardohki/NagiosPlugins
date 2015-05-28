@@ -1,14 +1,17 @@
 #!/usr/bin/perl
 
-################################################################################
-# check_cisco_ifload.pl
+##########################################################################
+# check_cisco_ifload.pl 
 # Nagios Plugin for check Cisco Device Port Bandwidth (RX/TX)
 #
 # Prerequisites:
 #	net-snmp-utils
 #
-# Release 1.0 - 2015/05/27
-#	Author: Eduardo Hernacki <eduardohki@gmail.com>
+# Author: Eduardo Hernacki <eduardohki@gmail.com>
+#	Release 1.0 - 2015/05/27
+#	Release 1.1 - 2015/05/28
+#		Changelog:	Changed output values from Mbyte/s to Mbit/s;
+#					Result in critical if interface load is zero;
 #
 #
 #
@@ -26,13 +29,13 @@
 #	GNU General Public License for more details.
 #
 #	You should have received a copy of the GNU General Public License
-#	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#	along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 #
-################################################################################
+###########################################################################
 
 # Plugin Information
 $plugin_name = $0;
-$plugin_version = "v1.0";
+$plugin_version = "v1.1";
 
 # Nagios return codes
 $OK = 0;
@@ -42,9 +45,6 @@ $UNKNOWN = 3;
 
 # Plugin parameters
 $community = "public";	# Default community
-
-# Script Usage
-$usage="Usage: $plugin_name -H <host> [-C <communnity>] -if <port_ID> -w <MB/s> -c <MB/s> [ -l | --list-interfaces ] [-h | --help]\n";
 
 use Getopt::Long qw(:config no_ignore_case);
 GetOptions(
@@ -60,6 +60,9 @@ GetOptions(
 # OLD-CISCO-INTERFACES-MIB Definition
 $IfInBitsSec = '1.3.6.1.4.1.9.2.2.1.1.6';
 $IfOutBitsSec = '1.3.6.1.4.1.9.2.2.1.1.6';
+
+# Script Usage
+$usage="Usage: $plugin_name -H <host> [-C <communnity>] -if <port_ID> -w <MB/s> -c <MB/s> [ -l | --list-interfaces ] [-h | --help]\n";
 
 # Help sub
 sub help {
@@ -160,28 +163,34 @@ if ($warning || $critical) {
 	exit $CRITICAL;
 }
 
+
 # Get interface Info
 $inLoad = &getSNMP("$IfInBitsSec.$interface");
 $outLoad = &getSNMP("$IfOutBitsSec.$interface");
 
-# Convert from bit/sec to Mbytes/sec
-$inLoad = ($inLoad / 1000 / 1000) * 0.125;
-$outLoad = ($outLoad / 1000 / 1000) * 0.125;
+# Convert from bit/sec to Mbit/sec
+$inLoad = $inLoad / 1000 / 1000;
+$outLoad = $outLoad / 1000 / 1000;
 
 # Round Float point
 $inLoad = sprintf("%.2f", $inLoad);
 $outLoad = sprintf("%.2f", $outLoad);
 
-if ($inLoad >= $critical || $outLoad >= $critical) {
-	print "CRITICAL: In: $inLoad MB/s, Out: $outLoad MB/s|rx=$inLoad\;tx=$outLoad\;\n";
+
+# Interface validation:
+if ($inLoad == 0 && $outLoad == 0) {
+	print "CRITICAL: In: $inLoad Mbit/s, Out: $outLoad Mbit/s|rx=$inLoad\;$warning\;$critical tx=$outLoad\;$warning\;$critical\n";
+	exit $CRITICAL;
+} elsif ($inLoad >= $critical || $outLoad >= $critical) {
+	print "CRITICAL: In: $inLoad Mbit/s, Out: $outLoad Mbit/s|rx=$inLoad\;$warning\;$critical tx=$outLoad\;$warning\;$critical\n";
 	exit $CRITICAL;
 } elsif ($inLoad >= $warning || $outLoad >= $warning) {
-	print "WARNING: In: $inLoad MB/s, Out: $outLoad MB/s|rx=$inLoad\;tx=$outLoad\;\n";
+	print "WARNING: In: $inLoad Mbit/s, Out: $outLoad Mbit/s|rx=$inLoad\;$warning\;$critical tx=$outLoad\;$warning\;$critical\n";
 	exit $WARNING;
 } else {
-	print "OK: In: $inLoad MB/s, Out: $outLoad MB/s|rx=$inLoad\;tx=$outLoad\;\n";
+	print "OK: In: $inLoad Mbit/s, Out: $outLoad Mbit/s|rx=$inLoad\;$warning\;$critical tx=$outLoad\;$warning\;$critical\n";
 	exit $OK;
 }
 
-# If anything goes wrong
+# If anithyng goes wrong
 exit $UNKNOWN;
