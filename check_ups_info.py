@@ -10,7 +10,7 @@
 #	net-snmp-python
 #
 # Release 1.2 - 2015/03/27
-#	Author: Eduardo Hernacki - OpenUX <eduardo.hernacki@openux.com.br>
+#	Author: Eduardo Hernacki <eduardohki@gmail.com>
 #
 #
 #		      GNU GENERAL PUBLIC LICENSE
