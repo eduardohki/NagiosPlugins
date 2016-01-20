@@ -8,7 +8,7 @@
 #	net-snmp-utils
 #
 # Release 1.0 - 2014/12/18
-#	Author: Eduardo Hernacki - OpenUX <eduardo.hernacki@openux.com.br>
+#	Author: Eduardo Hernacki <eduardohki@gmail.com>
 #
 #
 #
